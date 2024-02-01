@@ -17,12 +17,9 @@ Matrix::Matrix(int i, int j, bool random)
         std::default_random_engine engine(42);
         std::uniform_real_distribution<double> distribution(0, 0.1);
         for(int x = 0; x < i*j; ++x) { vec.push_back(distribution(engine)); }
-        std::cout << "created random(0-1) matrix of size: " << rows << " x " << cols << std::endl;
     }
     else {
-//        vec.reserve(i*j);
         for(int x = 0; x < i*j; ++x) { vec.push_back(0.0); }
-        std::cout << "created 0's matrix of size: " << rows << " x " << cols << std::endl;
     }
 }
 
@@ -33,9 +30,6 @@ Matrix::Matrix(int x, int y, const std::vector<double>& invec)
     if (x*y == invec.size()){
         vec.assign(invec.begin(),invec.end());
     } else{throw std::runtime_error("trying to construct a matrix from vector with invalid size arguments");}
-//    for (double i : invec) {
-//        vec.push_back(i);
-//    }
 }
 
 
@@ -108,11 +102,57 @@ void Matrix::add(Matrix& other) {
     if(cols != other.cols || rows != other.rows) {
         throw std::runtime_error("attempting to add matrices of different sizes");
     }
-    for(int i = 0; i < rows; ++i) {
-        for(int j = 0; j < cols; ++j) {
-            vec[i*rows + cols] += other.vec[i*rows + cols];
-        }
+
+    int count = 0;
+
+    for(auto &x: vec){
+        x += other.vec[count];
+        ++count;
     }
+}
+
+//only intended for testing
+std::vector<double> Matrix::getVector() {
+    return vec;
+}
+
+void Matrix::zero() {
+    for(auto &x: vec){
+        x = 0;
+    }
+}
+
+Matrix Matrix::operator-(Matrix &other) const {
+    Matrix temp(other.getrows(), other.getcols(), vec);
+    temp.subtract(other);
+    return temp;
+}
+
+void Matrix::subtract(Matrix &other) {
+    if(cols != other.cols || rows != other.rows) {
+        throw std::runtime_error("attempting to subtract matrices of different sizes");
+    }
+
+    int count = 0;
+
+    for(auto &x: vec){
+        x -= other.vec[count];
+        ++count;
+    }
+}
+
+bool Matrix::operator==(Matrix &other) const {
+    if(cols != other.cols || rows != other.rows || vec.size() != other.vec.size()) {
+        return false;
+    }
+    int count = 0;
+    for(auto &x: vec) {
+        if (x != other.vec[count]) {
+            return false;
+        }
+        ++count;
+    }
+    return true;
 }
 
 

@@ -6,6 +6,8 @@
 #include <vector>
 #include <fstream>
 
+extern void runTests();
+
 
 //bool activation_f(double sum) {
 //    return static_cast<bool>(std::max(0.0, sum));
@@ -29,19 +31,7 @@ void textToVector(std::vector<double>& vector, std::string string) {
 
 
 int main() {
-    std::vector<double> va {{3,4,2}};
-    std::vector<double> vb {{13,9,7,15,8,7,4,6,6,4,0,3}};
-    Matrix matrixA(1,3,va);
-    Matrix matrixB(3,4,vb);
-    Matrix product(1,4);
-
-//    matrixA.print();
-//    std::cout << "\n";
-//
-//    matrixB.print();
-//    matrix_multiply(matrixA , matrixB , product);
-//    std::cout <<"\nafter Mutiplication " << "\n";
-//    product.print();
+    runTests();
 
     std::vector<double> out {};
     std::vector<double> input {};

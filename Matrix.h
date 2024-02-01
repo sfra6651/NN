@@ -13,6 +13,7 @@ public:
     double getval(int x, int y);
     int getrows() const;
     int getcols() const;
+    std::vector<double> getVector();
 
     void assign(int row, int col, double val);
     void print();
@@ -20,6 +21,10 @@ public:
     void map(ActivationFunctionPointer func);
     void mapto(ActivationFunctionPointer func, Matrix &input) const;
     void add(Matrix& other);
+    void subtract(Matrix& other);
+    Matrix operator -(Matrix& other) const;
+    bool operator ==(Matrix& other) const;
+    void zero();
 
 private:
     int rows;
