@@ -11,7 +11,8 @@ Matrix::Matrix()
 
 Matrix::Matrix(int i, int j, bool random)
     : rows{i},
-    cols{j}
+    cols{j},
+    size{i*j}
 {
     if (random){
         std::default_random_engine engine(42);
@@ -25,13 +26,28 @@ Matrix::Matrix(int i, int j, bool random)
 
 Matrix::Matrix(int x, int y, const std::vector<double>& invec)
     : rows{x},
-    cols{y}
+    cols{y},
+    size{x*y}
 {
     if (x*y == invec.size()){
         vec.assign(invec.begin(),invec.end());
     } else{throw std::runtime_error("trying to construct a matrix from vector with invalid size arguments");}
 }
 
+Matrix::Matrix(std::vector<double> &left, std::vector<double> &rhs)
+{
+    if(left.size() != rhs.size()){
+        throw std::runtime_error("Vectors need to be same size to multiple and form a matrix");
+    }
+    rows = left.size();
+    cols = rhs.size();
+    size = rows*cols;
+    for(int i = 0; i < left.size(); ++i){
+        for(int j = 0; j < rhs.size(); ++j) {
+            vec.push_back(left[i] * rhs[j]);
+        }
+    }
+}
 
 double Matrix::getval(int row, int col) {
     if (row > rows || col > cols) {throw std::runtime_error("Matrix access out of bounds");}
@@ -112,7 +128,7 @@ void Matrix::add(Matrix& other) {
 }
 
 //only intended for testing
-std::vector<double> Matrix::getVector() {
+std::vector<double>& Matrix::getVector() {
     return vec;
 }
 
@@ -154,5 +170,47 @@ bool Matrix::operator==(Matrix &other) const {
     }
     return true;
 }
+
+void Matrix::scalarMultiply(double scalar) {
+    for(auto &x: vec) {
+        x *= scalar;
+    }
+}
+
+void Matrix::elementwiseMultiply(Matrix &left, Matrix& right) {
+    if(cols != left.cols || rows != left.rows || cols != right.cols || rows != right.rows) {
+        throw std::runtime_error("attempting to elementwise Multiply matrices of different sizes");
+    }
+    int count = 0;
+    for(auto  &x: vec){
+        x = left.getVector()[count] * right.getVector()[count];
+    }
+
+}
+
+void Matrix::transpose() {
+    int oldCols {cols};
+    int oldRows {rows};
+    cols = rows;
+    rows = oldCols;
+
+    Matrix temp(oldRows, oldCols, vec);
+    for (size_t i = 0; i < rows; ++i) {
+        for (size_t j = 0; j < cols; ++j) {
+            this->assign(i,j,temp.getval(j, i));
+        }
+    }
+}
+
+int Matrix::getsize() {
+    return size;
+}
+
+void Matrix::oneDimentionalTranspose() {
+    int tempcols = cols;
+    cols = rows;
+    rows = tempcols;
+}
+
 
 

@@ -38,10 +38,12 @@ int main() {
     textToVector(input, std::string("/Users/shaun/Dev/NN/input.txt"));
     textToVector(out, std::string("/Users/shaun/Dev/NN/output.txt"));
 
-    Network network(3,10);
+    auto network = std::make_unique<Network>(3,10);
 
-    network.init(input, out);
-    network.feed_forward();
+//    Network network(3,10);
+    network->init(input, out);
+    network->feed_forward();
+    network->back_propagate();
 
     return 0;
 }
