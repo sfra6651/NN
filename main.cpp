@@ -1,12 +1,14 @@
 #include <iostream>
 #include "Matrix.h"
-#include "Neuron.h"
 #include <algorithm>
-#include "Network.h"
+#include "NNRegressor.h"
+#include "NNClassifier.h"
 #include <vector>
 #include <fstream>
+#include "ActivationFunctions.h"
 
 extern void runTests();
+
 
 
 //bool activation_f(double sum) {
@@ -31,19 +33,28 @@ void textToVector(std::vector<double>& vector, std::string string) {
 
 
 int main() {
-    runTests();
+//    runTests();
 
     std::vector<double> out {};
     std::vector<double> input {};
     textToVector(input, std::string("/Users/shaun/Dev/NN/input.txt"));
     textToVector(out, std::string("/Users/shaun/Dev/NN/output.txt"));
 
-    auto network = std::make_unique<Network>(3,10);
+    auto network = std::make_unique<NNClassifier>(3,5);
 
 //    Network network(3,10);
     network->init(input, out);
+
+    for (int i = 0; i < 1000; ++i) {
+        network->feed_forward();
+        network->back_propagate();
+        network->updateWeights(0.01);
+    }
     network->feed_forward();
-    network->back_propagate();
+    std::cout << "FINAL PREDICTION: \n";
+    network->getOutput().print();
+
+//    network->checkStatus();
 
     return 0;
 }

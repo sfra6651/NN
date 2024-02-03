@@ -1,19 +1,22 @@
-#ifndef NN_NETWORK_H
-#define NN_NETWORK_H
+#ifndef NN_NNREGRESSOR_H
+#define NN_NNREGRESSOR_H
 #include <array>
 #include "Matrix.h"
-#include "Neuron.h"
+#include "ActivationFunctions.h"
 
-double relU(double sum);
-double relUDerivative(double x);
+//double sigmoid(double x);
+//double sigmoidDerivative(double x);
 
-class Network {
+class NNRegressor {
 public:
     using ActivationFunctionPointer = double (*)(double);
-    Network(int hidden_layers, int depth, ActivationFunctionPointer activation_function = relU);
+    NNRegressor(int hidden_layers, int depth, ActivationFunctionPointer activation_function = sigmoid, ActivationFunctionPointer activation_function_deriv = sigmoidDerivative);
     void init(std::vector<double>& in, std::vector<double>& out);
     void feed_forward();
     void back_propagate();
+    void updateWeights(double learningRate);
+    Matrix getOutput();
+    void checkStatus();
     void updateLoss();
 
 private:
@@ -21,22 +24,23 @@ private:
     int depth;
     double currentLoss;
     ActivationFunctionPointer activationFunction;
-    std::vector<std::vector<Neuron>> hiddenLayers;
+    ActivationFunctionPointer activationFunctionDerivative;
     Matrix targetValues;
     Matrix inputValues;
     Matrix outputValues;
     Matrix inputWeights;
     Matrix outputWeights;
-    Matrix outputWeightDeltas;
-    Matrix inputWeightDeltas;
+    Matrix outputWeightPartials;
+    Matrix inputWeightPartials;
     Matrix outputError;
     std::vector<Matrix> hiddenLayerInputs;
     std::vector<Matrix> hiddenLayerOutputs;
-    std::vector<Matrix> hiddenLayerWeights;
     std::vector<Matrix> hiddenLayerErrors;
+    std::vector<Matrix> hiddenLayerWeights;
+    std::vector<Matrix> hiddenLayerPartials;
     std::vector<Matrix> hiddenLayerDerivatives;
 
 };
 
 
-#endif //NN_NETWORK_H
+#endif //NN_NNREGRESSOR_H

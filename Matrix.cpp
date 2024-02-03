@@ -16,7 +16,7 @@ Matrix::Matrix(int i, int j, bool random)
 {
     if (random){
         std::default_random_engine engine(42);
-        std::uniform_real_distribution<double> distribution(0, 0.1);
+        std::uniform_real_distribution<double> distribution(-0.1, 0.1);
         for(int x = 0; x < i*j; ++x) { vec.push_back(distribution(engine)); }
     }
     else {
@@ -184,6 +184,18 @@ void Matrix::elementwiseMultiply(Matrix &left, Matrix& right) {
     int count = 0;
     for(auto  &x: vec){
         x = left.getVector()[count] * right.getVector()[count];
+    }
+
+}
+
+void Matrix::elementwiseMultiply(Matrix& right) {
+    if(cols != right.cols || rows != right.rows) {
+        throw std::runtime_error("attempting to elementwise Multiply matrices of different sizes");
+    }
+    int count = 0;
+    for(auto  &x: vec){
+        x = x * right.getVector()[count];
+        ++count;
     }
 
 }

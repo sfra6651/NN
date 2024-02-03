@@ -1,5 +1,5 @@
 #include "Matrix.h"
-#include "Network.h"
+#include "NNRegressor.h"
 #include <vector>
 #include <iostream>
 
@@ -131,10 +131,21 @@ void matrixTranspose() {
     std::cout << "TEST: matrix transpose succeeded\n";
 }
 
+void elementWiseMultiply(){
+    std::vector<double> va{{1,2,3,1,2,3}};
+    std::vector<double> vb{{2,2,3,2,2,3}};
+    Matrix A(2,3,va);
+    Matrix B(2,3,vb);
+
+    A.elementwiseMultiply(B);
+//    A.print();
+}
+
 void runTests(){
 //    matrixAdd();
 //    matrixSubtract();
 //    matrixEquality();
+//    elementWiseMultiply();
     scalar_multiply();
     matrixFrom2Vectors();
     matrixTranspose();

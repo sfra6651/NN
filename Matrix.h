@@ -28,6 +28,7 @@ public:
     bool operator ==(Matrix& other) const;
     void scalarMultiply(double scalar);
     void elementwiseMultiply(Matrix &left, Matrix& right);
+    void elementwiseMultiply(Matrix &right);
     void transpose();
     void oneDimentionalTranspose();
     void zero();

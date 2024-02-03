@@ -4,10 +4,13 @@ project(NN)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(NN main.cpp
-        Network.cpp
-        Network.h
-        Neuron.cpp
-        Neuron.h
+        NNRegressor.cpp
+        NNRegressor.h
         Matrix.cpp
         Matrix.h
-        tests.cpp)
+        tests.cpp
+        ActivationFunctions.h
+        ActivationFunctions.cpp
+        NNClassifier.cpp
+        NNClassifier.h
+)
