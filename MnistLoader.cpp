@@ -29,11 +29,8 @@ std::vector<Image> MnistLoader::readImages(const std::string &filename, int coun
     for (int i = 0; i < count; ++i) {
         images[i].pixels.resize(IMAGE_SIZE);
         for (int j = 0; j < IMAGE_SIZE; ++j) {
-//            uint8_t pixel;
-//            file.read(reinterpret_cast<char *>(&pixel), 1);
             int c;
             c = file.get();
-//            std::cout <<  c << "\n";
             images[i].pixels[j] = static_cast<double>(c);
         }
     }
@@ -52,14 +49,9 @@ std::vector<double> MnistLoader::readLabels(const std::string &filename, int cou
 
     std::vector<double> labels(count);
     for (int i = 0; i < count; ++i) {
-//        uint8_t label;
-//        file.read(reinterpret_cast<char *>(&label), 1);
-//        labels[i] = static_cast<double>(label);
             int c;
             c = file.get();
-//            std::cout <<  c << "\n";
             labels[i] = static_cast<double>(c);
     }
-
     return labels;
 }

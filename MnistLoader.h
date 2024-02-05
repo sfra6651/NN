@@ -20,7 +20,7 @@ public:
     MnistLoader(int numTraining, int numTest);
 
 private:
-    const int IMAGE_SIZE = 28 * 28; // MNIST images are 28x28
+    const int IMAGE_SIZE = 28 * 28;
 
     void loadTrainingData(int count);
     void loadTestData(int count);
