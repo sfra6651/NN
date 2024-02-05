@@ -8,6 +8,7 @@ Crucial Tasks still to do:
   - add in biases
   - batch proccessing
   - support for different activation functions at different layers
+  - support for different layer depths - im just hoping i can get a decent outcome without this, i think it should be possible.
 
 Nice to have, time dependant:
   - parrallize batching and matrix operation, optimize matrix operations in general
