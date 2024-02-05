@@ -18,17 +18,20 @@ void NNClassifier::init(std::vector<double> &input, std::vector<double> &output)
     outputLayerOuputs = Matrix(1, output.size());
     targetValues = Matrix(1, output.size(), output);
     outputLayerError = Matrix(output.size(), 1);
-
     outputLayerDerivatives = Matrix(1,output.size());
 
     //weights and partials
-    inputWeights = Matrix(input.size(), depth, true);
+    inputWeights = Matrix(input.size(), depth, true, 0.002);
     inputWeightPartials = Matrix(input.size(), depth);
-    outputWeights = Matrix(depth,output.size(), true);
+    outputWeights = Matrix(depth,output.size(), true, 0.2);
     outputWeightPartials = Matrix(depth, output.size());
+
+    inputEpocWeights = Matrix(input.size(), depth);
+    outputEpocWeighs = Matrix(depth,output.size());
     for (int i = 0; i < num_hidden_layers - 1;  ++i) {
-        hiddenLayerWeights.push_back(Matrix(depth, depth, true));
+        hiddenLayerWeights.push_back(Matrix(depth, depth, true, 0.2));
         hiddenLayerPartials.push_back(Matrix(depth,depth));
+        hiddenLayerEpocWeights.push_back(Matrix(depth,depth));
     }
 
     //hidden layer nodes
@@ -57,7 +60,7 @@ void NNClassifier::feed_forward() {
     //output layer
     matrix_multiply(hiddenLayerOutputs.back(), outputWeights, outputLayerInputs);
     outputLayerInputs.mapto(activationFunction, outputLayerOuputs);
-    outputLayerOuputs.print();
+//    outputLayerOuputs.print();
 
     //calculate derivatives
     for (int i = 0; i < num_hidden_layers; ++i) {
@@ -154,4 +157,11 @@ void NNClassifier::checkStatus() {
 Matrix NNClassifier::getOutput() {
     return outputLayerOuputs;
 }
+
+void NNClassifier::loadDataPoint(std::vector<double>& input, std::vector<double>& target) {
+    inputValues = Matrix(input.size(), 1, input);
+    targetValues = Matrix(1,target.size(), target);
+    inputValues.scalarMultiply(1.0/255.0);
+}
+
 

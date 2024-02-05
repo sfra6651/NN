@@ -12,6 +12,8 @@ public:
     void feed_forward();
     void back_propagate();
     void updateWeights(double learningRate);
+    void updateEpocWeights(double learningRate);
+    void loadDataPoint(std::vector<double>& pointInput, std::vector<double>& target);
     Matrix getOutput();
     void checkStatus();
     void updateLoss();
@@ -38,6 +40,10 @@ private:
     std::vector<Matrix> hiddenLayerWeights;
     std::vector<Matrix> hiddenLayerPartials;
     std::vector<Matrix> hiddenLayerDerivatives;
+
+    Matrix inputEpocWeights;
+    Matrix outputEpocWeighs;
+    std::vector<Matrix> hiddenLayerEpocWeights;
 
 };
 

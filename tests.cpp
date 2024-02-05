@@ -2,6 +2,7 @@
 #include "NNRegressor.h"
 #include <vector>
 #include <iostream>
+#include "MnistLoader.h"
 
 void matrixAdd(){
     std::vector<double> va{{1 ,2, 3, 4, 5, 6, 7, 8}};
@@ -141,12 +142,24 @@ void elementWiseMultiply(){
 //    A.print();
 }
 
+void MnistLoaderTest(){
+    int numTrainingImages = 2;
+    int numTestImages = 2;
+    MnistLoader mnistLoader(numTrainingImages, numTestImages);
+
+    for (int i = 0; i < mnistLoader.testImages[0].pixels.size(); ++i) {
+//        std::cout << mnistLoader.testImages[0].pixels[i] << " " << mnistLoader.testImages[1].pixels[i] << "\n";
+    }
+
+}
+
 void runTests(){
 //    matrixAdd();
 //    matrixSubtract();
 //    matrixEquality();
 //    elementWiseMultiply();
-    scalar_multiply();
-    matrixFrom2Vectors();
-    matrixTranspose();
+//    scalar_multiply();
+//    matrixFrom2Vectors();
+//    matrixTranspose();
+    MnistLoaderTest();
 }

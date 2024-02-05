@@ -9,14 +9,14 @@ Matrix::Matrix()
 }
 
 
-Matrix::Matrix(int i, int j, bool random)
+Matrix::Matrix(int i, int j, bool random, double stdev)
     : rows{i},
     cols{j},
     size{i*j}
 {
     if (random){
         std::default_random_engine engine(42);
-        std::uniform_real_distribution<double> distribution(-0.1, 0.1);
+        std::uniform_real_distribution<double> distribution(-stdev, stdev);
         for(int x = 0; x < i*j; ++x) { vec.push_back(distribution(engine)); }
     }
     else {

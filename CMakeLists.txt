@@ -13,4 +13,6 @@ add_executable(NN main.cpp
         ActivationFunctions.cpp
         NNClassifier.cpp
         NNClassifier.h
+        MnistLoader.cpp
+        MnistLoader.h
 )

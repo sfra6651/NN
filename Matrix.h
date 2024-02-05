@@ -7,7 +7,7 @@
 class Matrix {
 public:
     Matrix();
-    Matrix(int x, int y, bool random = false);
+    Matrix(int x, int y, bool random = false, double stdev = 0.1);
     Matrix(int x, int y, const std::vector<double>& invec);
     Matrix(std::vector<double>& left, std::vector<double>& rhs);
 
