@@ -1,6 +1,9 @@
 Simple Feed Forawrd Neuaral Net.
 The goal is to be able to classify the MNIST dataset which compromises of a few thousant 28*28 pixle images of hand drawn digits and the corrosponding labels.
 
+Current testing with stochastic gradient decent the network appears to be collapsing. Need to test some more configurations and figure out the cause.
+I believe it is the configuration rather an incorrect implementation.
+
 Crucial Tasks still to do:
   - add in biases
   - batch proccessing
