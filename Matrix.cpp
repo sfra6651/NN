@@ -9,19 +9,27 @@ Matrix::Matrix()
 }
 
 
-Matrix::Matrix(int i, int j, bool random, double stdev)
+Matrix::Matrix(int i, int j, bool random)
     : rows{i},
     cols{j},
     size{i*j}
 {
     if (random){
         std::default_random_engine engine(42);
-        std::uniform_real_distribution<double> distribution(-stdev, stdev);
+        std::normal_distribution<double> distribution(0.0, 1.0); ;
         for(int x = 0; x < i*j; ++x) { vec.push_back(distribution(engine)); }
     }
     else {
         for(int x = 0; x < i*j; ++x) { vec.push_back(0.0); }
     }
+}
+
+Matrix::Matrix(int x, int y, double val)
+    : rows{x},
+      cols{y},
+      size{x*y}
+{
+    for(int i = 0; i < x*y; ++i) { vec.push_back(val); }
 }
 
 Matrix::Matrix(int x, int y, const std::vector<double>& invec)
@@ -223,6 +231,7 @@ void Matrix::oneDimentionalTranspose() {
     cols = rows;
     rows = tempcols;
 }
+
 
 
 

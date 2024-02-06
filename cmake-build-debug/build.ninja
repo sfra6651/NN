@@ -91,6 +91,12 @@ build CMakeFiles/NN.dir/MnistLoader.cpp.o: CXX_COMPILER__NN_unscanned_Debug /Use
   OBJECT_DIR = CMakeFiles/NN.dir
   OBJECT_FILE_DIR = CMakeFiles/NN.dir
 
+build CMakeFiles/NN.dir/FFClassifier.cpp.o: CXX_COMPILER__NN_unscanned_Debug /Users/shaun/Dev/NN/FFClassifier.cpp || cmake_object_order_depends_target_NN
+  DEP_FILE = CMakeFiles/NN.dir/FFClassifier.cpp.o.d
+  FLAGS = -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk -mmacosx-version-min=14.1 -fcolor-diagnostics
+  OBJECT_DIR = CMakeFiles/NN.dir
+  OBJECT_FILE_DIR = CMakeFiles/NN.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target NN
@@ -99,7 +105,7 @@ build CMakeFiles/NN.dir/MnistLoader.cpp.o: CXX_COMPILER__NN_unscanned_Debug /Use
 #############################################
 # Link the executable NN
 
-build NN: CXX_EXECUTABLE_LINKER__NN_Debug CMakeFiles/NN.dir/main.cpp.o CMakeFiles/NN.dir/NNRegressor.cpp.o CMakeFiles/NN.dir/Matrix.cpp.o CMakeFiles/NN.dir/tests.cpp.o CMakeFiles/NN.dir/ActivationFunctions.cpp.o CMakeFiles/NN.dir/NNClassifier.cpp.o CMakeFiles/NN.dir/MnistLoader.cpp.o
+build NN: CXX_EXECUTABLE_LINKER__NN_Debug CMakeFiles/NN.dir/main.cpp.o CMakeFiles/NN.dir/NNRegressor.cpp.o CMakeFiles/NN.dir/Matrix.cpp.o CMakeFiles/NN.dir/tests.cpp.o CMakeFiles/NN.dir/ActivationFunctions.cpp.o CMakeFiles/NN.dir/NNClassifier.cpp.o CMakeFiles/NN.dir/MnistLoader.cpp.o CMakeFiles/NN.dir/FFClassifier.cpp.o
   FLAGS = -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk -mmacosx-version-min=14.1
   OBJECT_DIR = CMakeFiles/NN.dir
   POST_BUILD = :

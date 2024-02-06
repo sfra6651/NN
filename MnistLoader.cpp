@@ -16,7 +16,7 @@ void MnistLoader::loadTestData(int count) {
     testLabels = readLabels("/Users/shaun/Dev/NN/MNIST/t10k-labels.idx1-ubyte", count);
 }
 
-std::vector<Image> MnistLoader::readImages(const std::string &filename, int count) {
+std::vector<std::vector<double>> MnistLoader::readImages(const std::string &filename, int count) {
     std::ifstream file(filename, std::ios::binary);
     if (!file.is_open()) {
         throw std::runtime_error("Could not open file " + filename);
@@ -25,13 +25,13 @@ std::vector<Image> MnistLoader::readImages(const std::string &filename, int coun
     // Skipping the header
     file.seekg(16);
 
-    std::vector<Image> images(count);
+    std::vector<std::vector<double>> images(count);
     for (int i = 0; i < count; ++i) {
-        images[i].pixels.resize(IMAGE_SIZE);
+        images[i].resize(IMAGE_SIZE);
         for (int j = 0; j < IMAGE_SIZE; ++j) {
             int c;
             c = file.get();
-            images[i].pixels[j] = static_cast<double>(c);
+            images[i][j] = static_cast<double>(c);
         }
     }
 

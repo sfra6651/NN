@@ -12,9 +12,9 @@ struct Image {
 
 class MnistLoader {
 public:
-    std::vector<Image> trainingImages;
+    std::vector<std::vector<double>> trainingImages;
     std::vector<double> trainingLabels;
-    std::vector<Image> testImages;
+    std::vector<std::vector<double>> testImages;
     std::vector<double> testLabels;
 
     MnistLoader(int numTraining, int numTest);
@@ -25,7 +25,7 @@ private:
     void loadTrainingData(int count);
     void loadTestData(int count);
 
-    std::vector<Image> readImages(const std::string &filename, int count);
+    std::vector<std::vector<double>> readImages(const std::string &filename, int count);
     std::vector<double> readLabels(const std::string &filename, int count);
 };
 

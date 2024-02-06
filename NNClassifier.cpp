@@ -1,5 +1,5 @@
 #include "NNClassifier.h"
-
+#include "ActivationFunctions.h"
 #include "iostream"
 #include <cmath>
 
@@ -7,8 +7,17 @@ NNClassifier::NNClassifier(int hidden_layers, int depth, ActivationFunctionPoint
         :num_hidden_layers{hidden_layers},
          depth{depth},
          activationFunction {activation_function},
-         activationFunctionDerivative{activation_function_derivative}
+         activationFunctionDerivative{activation_function_derivative},
+         outputLayerActivationF{sigmoid},
+         outputLayerActivationFDerivative{sigmoidDerivative}
 {
+}
+
+void NNClassifier::setOuptupLayerFunction(NNClassifier::ActivationFunctionPointer f,NNClassifier::ActivationFunctionPointer fd)
+{
+    outputLayerActivationF = f;
+    outputLayerActivationFDerivative = fd;
+
 }
 
 void NNClassifier::init(std::vector<double> &input, std::vector<double> &output) {
@@ -19,19 +28,20 @@ void NNClassifier::init(std::vector<double> &input, std::vector<double> &output)
     targetValues = Matrix(1, output.size(), output);
     outputLayerError = Matrix(output.size(), 1);
     outputLayerDerivatives = Matrix(1,output.size());
+    outputLayerBias = Matrix(Matrix(1,output.size(), 0.01));
 
     //weights and partials
-    inputWeights = Matrix(input.size(), depth, true, 0.002);
+    inputWeights = Matrix(input.size(), depth, true);
     inputWeightPartials = Matrix(input.size(), depth);
-    outputWeights = Matrix(depth,output.size(), true, 0.2);
+    outputWeights = Matrix(depth,output.size(), true);
     outputWeightPartials = Matrix(depth, output.size());
 
-    inputEpocWeights = Matrix(input.size(), depth);
-    outputEpocWeighs = Matrix(depth,output.size());
+    inputBatchWeights = Matrix(input.size(), depth);
+    outputBatchWeighs = Matrix(depth,output.size());
     for (int i = 0; i < num_hidden_layers - 1;  ++i) {
-        hiddenLayerWeights.push_back(Matrix(depth, depth, true, 0.2));
+        hiddenLayerWeights.push_back(Matrix(depth, depth, true));
         hiddenLayerPartials.push_back(Matrix(depth,depth));
-        hiddenLayerEpocWeights.push_back(Matrix(depth,depth));
+        hiddenLayerBatchWeights.push_back(Matrix(depth,depth));
     }
 
     //hidden layer nodes
@@ -40,6 +50,7 @@ void NNClassifier::init(std::vector<double> &input, std::vector<double> &output)
         hiddenLayerInputs.push_back(Matrix(1,depth));
         hiddenLayerDerivatives.push_back(Matrix(1,depth));
         hiddenLayerErrors.push_back(Matrix(1,depth));
+        hiddenLayerBiases.push_back(Matrix(1,depth,0.01));
     }
 }
 
@@ -48,18 +59,21 @@ void NNClassifier::feed_forward() {
     inputValues.oneDimentionalTranspose();
     matrix_multiply(inputValues, inputWeights, hiddenLayerInputs[0]);
     inputValues.oneDimentionalTranspose();
+    hiddenLayerInputs[0].add(hiddenLayerBiases[0]);
     hiddenLayerInputs[0].mapto(activationFunction, hiddenLayerOutputs[0]);
 
     //hidden layers
     for(int i = 0; i < num_hidden_layers - 1; ++i)
     {
         matrix_multiply(hiddenLayerOutputs[i], hiddenLayerWeights[i], hiddenLayerInputs[i+1]);
+        hiddenLayerInputs[i+1].add(hiddenLayerInputs[i+1]);
         hiddenLayerInputs[i+1].mapto(activationFunction, hiddenLayerOutputs[i+1]);
     }
 
     //output layer
     matrix_multiply(hiddenLayerOutputs.back(), outputWeights, outputLayerInputs);
-    outputLayerInputs.mapto(activationFunction, outputLayerOuputs);
+    outputLayerInputs.add(outputLayerBias);
+    outputLayerInputs.mapto(outputLayerActivationF, outputLayerOuputs);
 //    outputLayerOuputs.print();
 
     //calculate derivatives
@@ -69,23 +83,34 @@ void NNClassifier::feed_forward() {
         }
     }
     for (int i = 0; i < targetValues.getsize(); ++i) {
-        outputLayerDerivatives.assign(0,i, activationFunctionDerivative(outputLayerOuputs.getval(0,i)));
+        outputLayerDerivatives.assign(0,i, outputLayerActivationFDerivative(outputLayerOuputs.getval(0,i)));
     }
 }
 
-void NNClassifier::back_propagate() {
+void NNClassifier::back_propagate(double numSamples) {
     //output layer
+    double learningRate = 0.05;
     outputLayerError = targetValues - outputLayerOuputs;
     outputLayerError.elementwiseMultiply(outputLayerDerivatives);
+    outputLayerError.scalarMultiply(1.0/numSamples); //normalized
     hiddenLayerOutputs.back().oneDimentionalTranspose();
     matrix_multiply(hiddenLayerOutputs.back(), outputLayerError, outputWeightPartials);
     hiddenLayerOutputs.back().oneDimentionalTranspose();
+    Matrix bias(outputLayerBias.getrows(), outputLayerBias.getcols());
+    bias.add(outputLayerError);
+    bias.scalarMultiply(learningRate);
+    outputLayerBias.add(bias);
 
     //first hidden layer (at the back)
     outputWeightPartials.transpose();
     matrix_multiply(outputLayerError,outputWeightPartials, hiddenLayerErrors.back());
     outputWeightPartials.transpose();
     hiddenLayerErrors.back().elementwiseMultiply(hiddenLayerDerivatives.back());
+    Matrix Hbias(hiddenLayerBiases[0].getrows(), hiddenLayerBiases[0].getcols());
+    Hbias.add(hiddenLayerErrors.back());
+    Hbias.scalarMultiply(learningRate);
+    hiddenLayerBiases.back().add(Hbias);
+
 
 
     //middle layers
@@ -95,9 +120,11 @@ void NNClassifier::back_propagate() {
         hiddenLayerErrors[i+1].oneDimentionalTranspose();
         matrix_multiply(hiddenLayerOutputs[i], hiddenLayerPartials[i], hiddenLayerErrors[i]);
         hiddenLayerErrors[i].elementwiseMultiply(hiddenLayerDerivatives[i]);
+        Hbias.zero();
+        Hbias.add(hiddenLayerErrors[i]);
+        Hbias.scalarMultiply(learningRate);
+        hiddenLayerBiases[i].add(Hbias);
     }
-
-    //final hidden layer (at the front)
 
     //input layer
     matrix_multiply(inputValues, hiddenLayerErrors[0], inputWeightPartials);
@@ -163,5 +190,73 @@ void NNClassifier::loadDataPoint(std::vector<double>& input, std::vector<double>
     targetValues = Matrix(1,target.size(), target);
     inputValues.scalarMultiply(1.0/255.0);
 }
+
+void NNClassifier::batchSingleUpdate() {
+    inputBatchWeights.add(inputWeightPartials);
+    outputBatchWeighs.add(outputWeightPartials);
+
+    int count = 0;
+    for (auto &x: hiddenLayerBatchWeights) {
+        x.add(hiddenLayerPartials[count]);
+        ++count;
+    }
+}
+
+void NNClassifier::batchFullUpdate(double learnginRate, double batchSize) {
+    double scalar = learnginRate/batchSize;
+
+    inputBatchWeights.scalarMultiply(scalar);
+    inputWeights.subtract(inputBatchWeights);
+
+    outputBatchWeighs.scalarMultiply(scalar);
+    outputWeights.subtract(outputBatchWeighs);
+
+    int count = 0;
+    for (auto &x: hiddenLayerWeights) {
+        hiddenLayerBatchWeights[count].scalarMultiply(scalar);
+        x.subtract(hiddenLayerBatchWeights[count]);
+        ++count;
+    }
+}
+
+void NNClassifier::printErrors() {
+    std::cout << "Errors\n";
+    for (int i = 0; i < num_hidden_layers; ++i) {
+        std::cout << "Hidden layer " << i << " ";
+        hiddenLayerErrors[i].print();
+    }
+    std::cout << "Output layer ";
+    outputLayerError.print();
+    std::cout << "\n";
+
+}
+
+void NNClassifier::printOuputs() {
+    std::cout << "Outputs\n";
+    for (int i = 0; i < num_hidden_layers; ++i) {
+        std::cout << "Hidden layer " << i << " ";
+        hiddenLayerOutputs[i].print();
+    }
+    std::cout << "Output layer ";
+    outputLayerOuputs.print();
+//    std::cout << "\n";
+}
+
+void NNClassifier::printInputs() {
+    std::cout << "Inputs\n";
+    for (int i = 0; i < num_hidden_layers; ++i) {
+        std::cout << "Hidden layer " << i << " ";
+        hiddenLayerInputs[i].print();
+    }
+    std::cout << "Output layer ";
+    outputLayerInputs.print();
+//    std::cout << "\n";
+}
+
+void NNClassifier::printTargets() {
+    std::cout << "Targets\n";
+    targetValues.print();
+}
+
 
 
