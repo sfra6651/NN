@@ -31,15 +31,15 @@ void NNClassifier::init(std::vector<double> &input, std::vector<double> &output)
     outputLayerBias = Matrix(Matrix(1,output.size(), 0.01));
 
     //weights and partials
-    inputWeights = Matrix(input.size(), depth, true);
+    inputWeights = Matrix(input.size(), depth, true, input.size());
     inputWeightPartials = Matrix(input.size(), depth);
-    outputWeights = Matrix(depth,output.size(), true);
+    outputWeights = Matrix(depth,output.size(), true, depth);
     outputWeightPartials = Matrix(depth, output.size());
 
     inputBatchWeights = Matrix(input.size(), depth);
     outputBatchWeighs = Matrix(depth,output.size());
     for (int i = 0; i < num_hidden_layers - 1;  ++i) {
-        hiddenLayerWeights.push_back(Matrix(depth, depth, true));
+        hiddenLayerWeights.push_back(Matrix(depth, depth, true, input.size()));
         hiddenLayerPartials.push_back(Matrix(depth,depth));
         hiddenLayerBatchWeights.push_back(Matrix(depth,depth));
     }
@@ -102,9 +102,9 @@ void NNClassifier::back_propagate(double numSamples) {
     outputLayerBias.add(bias);
 
     //first hidden layer (at the back)
-    outputWeightPartials.transpose();
+    outputWeightPartials.transposeInplace();
     matrix_multiply(outputLayerError,outputWeightPartials, hiddenLayerErrors.back());
-    outputWeightPartials.transpose();
+    outputWeightPartials.transposeInplace();
     hiddenLayerErrors.back().elementwiseMultiply(hiddenLayerDerivatives.back());
     Matrix Hbias(hiddenLayerBiases[0].getrows(), hiddenLayerBiases[0].getcols());
     Hbias.add(hiddenLayerErrors.back());

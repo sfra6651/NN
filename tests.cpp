@@ -124,12 +124,12 @@ void matrixTranspose() {
     Matrix B(3,3,vb);
 //    A.print();
 //    std::cout << "\n";
-    A.transpose();
+    A.transposeInplace();
 //    A.print();
     if (!(A==B)) {
-        throw std::runtime_error("matrix transpose failed failed");
+        throw std::runtime_error("matrix transposeInplace failed failed");
     }
-    std::cout << "TEST: matrix transpose succeeded\n";
+    std::cout << "TEST: matrix transposeInplace succeeded\n";
 }
 
 void elementWiseMultiply(){

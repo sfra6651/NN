@@ -8,9 +8,10 @@ class Matrix {
 public:
     Matrix();
     Matrix(int x, int y, double val);
-    Matrix(int x, int y, bool random = false);
+    Matrix(int x, int y, bool random = false, double n = 1.0);
     Matrix(int x, int y, const std::vector<double>& invec);
     Matrix(std::vector<double>& left, std::vector<double>& rhs);
+    explicit Matrix(std::vector<std::vector<double>>& input);
 
     double getval(int x, int y);
     int getrows() const;
@@ -26,18 +27,25 @@ public:
     void add(Matrix& other);
     void subtract(Matrix& other);
     Matrix operator -(Matrix& other) const;
+    void columnWiseSubtract(Matrix& left, Matrix& right);
     bool operator ==(Matrix& other) const;
     void scalarMultiply(double scalar);
     void elementwiseMultiply(Matrix &left, Matrix& right);
     void elementwiseMultiply(Matrix &right);
-    void transpose();
+    void transposeInplace();
+    Matrix getTranspose();
     void oneDimentionalTranspose();
     void zero();
+    void softmax(Matrix& input);
+    Matrix operator*(Matrix& left);
+    double elementSum();
+    int count();
+    void normalizeColumns();
 
 private:
-    int size;
-    int rows;
-    int cols;
+    int size{};
+    int rows{};
+    int cols{};
     std::vector<double> vec;
 };
 

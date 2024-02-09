@@ -70,9 +70,9 @@ void NNRegressor::back_propagate() {
     hiddenLayerOutputs.back().oneDimentionalTranspose();
 
     //first hidden layer (at the back)
-    outputWeightPartials.transpose();
+    outputWeightPartials.transposeInplace();
     matrix_multiply(outputError,outputWeightPartials, hiddenLayerErrors.back());
-    outputWeightPartials.transpose();
+    outputWeightPartials.transposeInplace();
     hiddenLayerErrors.back().elementwiseMultiply(hiddenLayerDerivatives.back());
 
 

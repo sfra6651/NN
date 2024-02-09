@@ -38,7 +38,7 @@ void singleSample() {
     int numTrainingImages = 1000;
     int numTestImages = 10;
     int numEpocs = 5;
-    int x = 4;
+    int x = 7;
 
     MnistLoader mnistLoader(numTrainingImages, numTestImages);
     std::vector<double> targetValues(10);
@@ -73,7 +73,7 @@ void runMNIST(){
     std::vector<double> targetValues(10);
 
 
-    auto network = std::make_unique<NNClassifier>(1,200);
+    auto network = std::make_unique<NNClassifier>(1,30);
     network->init(mnistLoader.trainingImages[0], targetValues);
 
     for (int k = 0; k < numEpocs; ++k) {
@@ -83,7 +83,7 @@ void runMNIST(){
             network->feed_forward();
 //            network->getOutput().print();
             network->back_propagate();
-            network->updateWeights(0.01);
+            network->updateWeights(0.1);
         }
         std::cout << "Epoc: " << k + 1 << "done\n";
     }
@@ -202,12 +202,14 @@ void binaryTest() {
 }
 int main() {
 //    runTests();
-
-//batchProccess();
     int trainingImages = 1000;
     int testImages = 100;
     MnistLoader mnistLoader(trainingImages, testImages);
-    FFClassifier network({784,30,10});
+    FFClassifier network({784,30,10}, 10);
+//    for (int i = 0; i < 30; i++) {
+//        network.train(mnistLoader);
+//    }
     network.train(mnistLoader);
+    network.test(mnistLoader);
     return 0;
 }

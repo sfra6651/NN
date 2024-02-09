@@ -6,23 +6,28 @@
 #include "ActivationFunctions.h"
 #include "MnistLoader.h"
 
+void normalizeVector(std::vector<double>& v);
+
 class FFClassifier {
 public:
-    FFClassifier(std::vector<int> sizes);
+    FFClassifier(std::vector<int> sizes, int batchSize);
     void train(MnistLoader& loader);
     void feedForward(Matrix& values);
-    void backProp(std::vector<Matrix>& partials);
+    void backProp(Matrix& values, Matrix& targets);
+    void test(MnistLoader& loader);
     void update(std::vector<Matrix>& partials);
-    double learningRate = 3.0;
+    double learningRate = 3;
     int layers;
+    int m;
 
-    Matrix targets;
     std::vector<Matrix> inputs;
     std::vector<Matrix> outputs;
     std::vector<Matrix> weights;
     std::vector<Matrix> biases;
     std::vector<Matrix> errors;
     std::vector<Matrix> derivatives;
+    std::vector<Matrix> weightPartials;
+    std::vector<Matrix> biasPartials;
 
 };
 
