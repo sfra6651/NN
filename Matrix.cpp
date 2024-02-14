@@ -199,19 +199,6 @@ void Matrix::subtract(Matrix &other) {
     }
 }
 
-void Matrix::columnWiseSubtract(Matrix& left, Matrix& right) {
-    //specifically for computing error in output layer. for every col in left subtract right and replace
-    // the corresponding col in this with those values
-    if (rows != left.rows || rows != right.rows || cols != left.cols) {
-        throw std::runtime_error("attempting to do columnWiseSubtract, matrices are of wrong size");
-    }
-    for (int i = 0; i < rows; ++i){
-        for (int j = 0; j < cols; ++j) {
-            double temp = right.getval(j,0) - left.getval(i,j);
-            this->assign(i,j, temp);
-        }
-    }
-}
 
 bool Matrix::operator==(Matrix &other) const {
     if(cols != other.cols || rows != other.rows || vec.size() != other.vec.size()) {
@@ -233,16 +220,6 @@ void Matrix::scalarMultiply(double scalar) {
     }
 }
 
-void Matrix::elementwiseMultiply(Matrix &left, Matrix& right) {
-    if(cols != left.cols || rows != left.rows || cols != right.cols || rows != right.rows) {
-        throw std::runtime_error("attempting to elementwise Multiply matrices of different sizes");
-    }
-    int count = 0;
-    for(auto  &x: vec){
-        x = left.getVector()[count] * right.getVector()[count];
-    }
-
-}
 
 void Matrix::elementwiseMultiply(Matrix& right) {
     if(cols != right.cols || rows != right.rows) {
@@ -349,6 +326,31 @@ int Matrix::count() {
         }
     }
     return c;
+}
+
+Matrix Matrix::dot(Matrix &right) {
+    if (cols != right.rows){
+        throw std::runtime_error("Incompatible matrices");
+    }
+    Matrix output = Matrix(rows, right.cols);
+
+    for (int i = 0; i < rows; ++i) //row in a
+    {
+        for (int j = 0; j < right.cols; ++j)//col in b
+        {
+            double sum = 0;
+            for(int k = 0; k < cols; ++k)// compute dot prod of the 2 rows
+            {
+                sum += this->getval(i, k) * right.getval(k,j);
+            }
+            output.assign(i, j, sum);
+        }
+    }
+    return output;
+}
+
+void Matrix::printShape() {
+    std::cout << "(" << rows << ", " << cols << ")\n";
 }
 
 

@@ -31,7 +31,7 @@ void setTargetVector(std::vector<double>& vec,double target) {
     for (auto &x: vec) {
         x = 0;
     }
-    vec[target] = 1;
+    vec[static_cast<int>(target)] = 1;
 }
 
 void singleSample() {
@@ -200,16 +200,99 @@ void binaryTest() {
     std::cout <<"Network trained \n";
     std::cout << "target: " << mnistLoader.trainingLabels[x];
 }
+
+std::vector<double> one_hot(std::vector<double>& targets) {
+    std::vector<double> output;
+    for (auto &target: targets) {
+        std::vector<double> vector(10);
+        for (auto &x: vector) {
+            x = 0;
+        }
+        vector[static_cast<int>(target)] = 1.0;
+        output.insert(output.end(), vector.begin(), vector.end());
+    }
+    return  output;
+}
+
+std::pair<std::vector<Matrix>, std::vector<Matrix>> init(std::vector<int> sizes) {
+    std::vector<Matrix> biases;
+    std::vector<Matrix> weights;
+    for (int i = 1; i < sizes.size(); ++i) {
+        biases.push_back(Matrix(sizes[i],1, true));
+        weights.push_back(Matrix(sizes[i],sizes[i-1], true));
+    }
+
+    return {weights, biases};
+}
+
+std::pair<std::vector<Matrix>, std::vector<Matrix>> feed_forward(
+        std::pair<std::vector<Matrix>, std::vector<Matrix>>& init, Matrix& X)
+{
+    std::vector<Matrix> inputs;
+    std::vector<Matrix> activations;
+    activations.push_back(X);
+    for (int i = 0; i < init.first.size(); ++i) {
+        inputs.push_back(init.first[i].dot(activations[activations.size()-1]));
+        Matrix temp = Matrix(inputs[0].getrows(), inputs[0].getcols());
+        inputs[0].mapto(sigmoid, temp);
+        activations.push_back(temp);
+    }
+    return {inputs, activations};
+}
+
+std::pair<std::vector<Matrix>, std::vector<Matrix>> back_prop(
+        std::pair<std::vector<Matrix>, std::vector<Matrix>>& inputs_activations,
+        std::vector<Matrix>& weights,
+        Matrix& Y
+        )
+{
+    int m = Y.getcols();
+    std::vector<Matrix> dW;
+    std::vector<Matrix> dB;
+    std::vector<Matrix> dZ;
+    Matrix dz1 = inputs_activations.second.back() - Y;
+    dZ.push_back(dz1);
+    for (int i = weights.size()-1; i > -1; --i) {
+
+    }
+
+}
+
+
+
 int main() {
-//    runTests();
-    int trainingImages = 1000;
-    int testImages = 100;
+////    runTests();
+    int trainingImages = 10000;
+    int testImages = 1000;
     MnistLoader mnistLoader(trainingImages, testImages);
-    FFClassifier network({784,30,10}, 10);
+    std::vector<double> temp;
+    for (int i = 0; i < mnistLoader.trainingImages.size(); ++i) {
+        temp.insert(temp.end(), mnistLoader.trainingImages[i].begin(), mnistLoader.trainingImages[i].end());
+    }
+    Matrix X_train = Matrix(mnistLoader.trainingImages.size(), 784, temp);
+
+    std::vector<double> one_hoted = one_hot(mnistLoader.trainingLabels);
+    Matrix Y_train = Matrix(mnistLoader.trainingLabels.size(), 10, one_hoted);
+
+    X_train.transposeInplace();
+    Y_train.transposeInplace();
+
+    std::pair<std::vector<Matrix>, std::vector<Matrix>> weights_biases;
+    std::pair<std::vector<Matrix>, std::vector<Matrix>> inputs_activations;
+
+    weights_biases = init({784,30,10});
+    inputs_activations = feed_forward(weights_biases, X_train);
+
+
+
+
+//    FFClassifier network({784,30,10}, 10);
 //    for (int i = 0; i < 30; i++) {
 //        network.train(mnistLoader);
+//        network.test(mnistLoader);
 //    }
-    network.train(mnistLoader);
-    network.test(mnistLoader);
+//    network.train(mnistLoader);
+//    network.test(mnistLoader);
+
     return 0;
 }

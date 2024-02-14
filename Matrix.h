@@ -19,18 +19,18 @@ public:
     std::vector<double>& getVector();
     int getsize();
 
+    Matrix dot(Matrix& right);
     void assign(int row, int col, double val);
     void print();
+    void printShape();
     using ActivationFunctionPointer = double (*)(double);
     void map(ActivationFunctionPointer func);
     void mapto(ActivationFunctionPointer func, Matrix &input) const;
     void add(Matrix& other);
     void subtract(Matrix& other);
     Matrix operator -(Matrix& other) const;
-    void columnWiseSubtract(Matrix& left, Matrix& right);
     bool operator ==(Matrix& other) const;
     void scalarMultiply(double scalar);
-    void elementwiseMultiply(Matrix &left, Matrix& right);
     void elementwiseMultiply(Matrix &right);
     void transposeInplace();
     Matrix getTranspose();

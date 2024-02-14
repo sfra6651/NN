@@ -30,10 +30,10 @@ FFClassifier::FFClassifier(std::vector<int> sizes, int batchSize) {
 
 void FFClassifier::train(MnistLoader &loader) {
     int batches = loader.trainingImages.size()/m;
-    std::cout << batches << "\n";
+//    std::cout << batches << "\n";
 
     for (int  i = 0; i < batches - 1; ++i) {
-        std::cout << "starting batch: " << i << "\n";
+//        std::cout << "starting batch: " << i << "\n";
         auto start = loader.trainingImages.begin() + (i*m);
         auto end = loader.trainingImages.begin() + (i*m + m);
         std::vector<std::vector<double>> slice(start, end);
@@ -57,10 +57,10 @@ void FFClassifier::train(MnistLoader &loader) {
         targets.transposeInplace();
         backProp(values, targets);
 
-        for (auto &x: t) {
-            std::cout << x << " ";
-        }
-        std::cout << "\n";
+//        for (auto &x: t) {
+//            std::cout << x << " ";
+//        }
+//        std::cout << "\n";
     }
 //    outputs[1].print();
 }
@@ -124,6 +124,7 @@ void FFClassifier::update(std::vector<Matrix> &partials) {
 }
 
 int getCorrect(Matrix&m , std::vector<double> t){
+//    Matrix targets = Matrix(1, t.size(), t);
     int count = 0;
     for (int i = 0; i < m.getrows(); ++i) {
         double max = 0;
@@ -142,9 +143,9 @@ int getCorrect(Matrix&m , std::vector<double> t){
 }
 
 void FFClassifier::test(MnistLoader &loader) {
-    double tests = loader.testImages.size() / static_cast<double> (m);
+    int tests = loader.testImages.size() / m;
     int correct = 0;
-    for (int i = 0; i < 1; ++i) {
+    for (int i = 0; i < tests -1; ++i) {
         //setting input
         auto start = loader.trainingImages.begin() + (i*m);
         auto end = loader.trainingImages.begin() + (i*m + m);
@@ -177,7 +178,9 @@ void FFClassifier::test(MnistLoader &loader) {
 
 
     }
-    std::cout << correct << " out of " << loader.trainingImages.size() << "\n";
+    double accuracy = static_cast<double>(correct)/ static_cast<double> (loader.trainingImages.size());
+    std::cout <<"Accuracy: " << accuracy << "\n";
+//    std::cout << correct << " out of " << loader.trainingImages.size() << "\n";
 }
 
 void normalizeVector(std::vector<double>& v) {

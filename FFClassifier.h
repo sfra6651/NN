@@ -16,7 +16,7 @@ public:
     void backProp(Matrix& values, Matrix& targets);
     void test(MnistLoader& loader);
     void update(std::vector<Matrix>& partials);
-    double learningRate = 3;
+    double learningRate = 0.01;
     int layers;
     int m;
 
